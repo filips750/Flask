@@ -1,2 +1,4 @@
-curl --header "Content-Type: application/json"  --request POST  --data '{"login":"password"}'   http://127.0.0.1:5000/register
-curl --header "Content-Type: application/json"  --request POST  --data '{"name":"McDonald", "localisation":"Wrzeszcz"}'   http://127.0.0.1:5000/restaurant 
+curl --header "Content-Type:application/json"  --request POST  --data '{"login":"password"}'   http://127.0.0.1:5000/register
+curl --header "Content-Type:application/json"  --request POST  --data '{"name":"McDonald","localisation":"Wrzeszcz"}'   http://127.0.0.1:5000/restaurant
+curl --header "Content-Type: application/json" --request POST --data "{\"name\":\"McDonald\", \"localisation\":\"Wrzeszcz\"}" http://127.0.0.1:5000/restaurant
+curl --header "Content-Type:application/json" --request POST --data '{"stars":"3","review":"Verygoodrestaurant","fk_restaurant":"1","fk_user":"1"}' http://127.0.0.1:5000/review

@@ -22,7 +22,7 @@ def add_restaurant():
     if request.is_json:
         cur, con = get_cursor_and_connection()
         restaurant = request.get_json()
-        restaurant["id"] = find_next_id()
+        restaurant["id"] = find_next_id('restaurants')
         query = 'INSERT INTO restaurants (id, name, localisation) VALUES (?, ?, ?)'
         cur.execute(query, (restaurant['id'],
                             restaurant['name'],

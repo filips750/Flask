@@ -3,7 +3,7 @@ from db_drivers import get_cursor_and_connection, get_cursor, find_next_id
 
 
 reviews = Blueprint('reviews', __name__, template_folder='API_parts')
-@reviews.route('/reviews')
+@reviews.route('/rev')
 
 
 @reviews.get('/review')
@@ -23,19 +23,20 @@ def add_review():
         cur, con = get_cursor_and_connection()
         review = request.get_json()
         review["id"] = find_next_id('reviews')
-        query = 'INSERT INTO restaurants (id, stars, review, fk_restaurant, fk_user) VALUES (?, ?, ?, ?)'
+        query = 'INSERT INTO reviews (id, stars, review, fk_restaurant, fk_user) VALUES (?, ?, ?, ?, ?)'
         cur.execute(query, (review["id"],
                             review["stars"],
                             review["review"], 
                             review["fk_restaurant"],
                             review["fk_user"]))
         con.commit()
+        return review
     else:
         return {"error": "Request must be JSON"}, 415
 
 
 @reviews.get('/reviews')
-def get_review():
+def get_reviews():
     query = 'SELECT stars, review, fk_restaurant, fk_user FROM reviews WHERE'
     begin_len = len(query)
     cur = get_cursor()
