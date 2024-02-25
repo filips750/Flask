@@ -9,9 +9,7 @@ def find_next_id(table_name):
     query = f'SELECT COUNT(id) FROM {table_name}'
     cur.execute(query)
     result = cur.fetchone()
-    
     con.close()  # Close the connection
-
     return result[0] + 1
 
 

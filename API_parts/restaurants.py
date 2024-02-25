@@ -1,20 +1,23 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from db_drivers import get_cursor, get_cursor_and_connection, find_next_id, sanitize
 
 
-app = Flask(__name__)
+restaurants = Blueprint('restaurants', __name__, template_folder='API_parts')
+@restaurants.route('/places')
 
 
-@app.get("/restaurants")
+@restaurants.get("/restaurants")
 def get_restaurants():
-    if request.arg.get('name'):
+    if request.args.get('name'):
         cur = get_cursor()
-        query = 'SELECT id, login, password FROM restaurants WHERE name LIKE ?'
-        name = sanitize(request.args.get('name'))
-        cur.execute(query, (int(name),))
+        query = 'SELECT id, name, localisation FROM restaurants WHERE name LIKE ?'
+        name = '%' + sanitize(request.args.get('name')) + '%'
+        cur.execute(query, (name,))
+        restaurants = cur.fetchall()
+        return jsonify(restaurants)
+    
 
-
-@app.post("/restaurant")
+@restaurants.post("/restaurant")
 def add_restaurant():
     if request.is_json:
         cur, con = get_cursor_and_connection()
@@ -25,3 +28,5 @@ def add_restaurant():
                             restaurant['name'],
                             restaurant['localisation']))
         con.commit()
+    else:
+        return {"error": "Request must be JSON"}, 415
