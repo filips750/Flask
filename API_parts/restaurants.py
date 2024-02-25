@@ -15,7 +15,7 @@ def get_restaurants():
         cur.execute(query, (name,))
         restaurants = cur.fetchall()
         return jsonify(restaurants)
-    
+
 
 @restaurants.post("/restaurant")
 def add_restaurant():

@@ -1,5 +1,7 @@
 from API_parts.restaurants import restaurants
 from API_parts.user_driver import auth
+from API_parts.reviews import reviews
+
 from flask import Flask
 
 app = Flask(__name__)
