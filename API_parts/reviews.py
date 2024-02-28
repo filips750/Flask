@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, Blueprint
-from db_drivers import get_cursor_and_connection, get_cursor, find_next_id
+from db_drivers import get_cursor_and_connection, get_cursor
 
 
 reviews = Blueprint('reviews', __name__, template_folder='API_parts')
@@ -22,14 +22,17 @@ def add_review():
     if request.is_json:
         cur, con = get_cursor_and_connection()
         review = request.get_json()
-        review["id"] = find_next_id('reviews')
-        query = 'INSERT INTO reviews (id, stars, review, fk_restaurant, fk_user) VALUES (?, ?, ?, ?, ?)'
-        cur.execute(query, (review["id"],
-                            review["stars"],
-                            review["review"], 
-                            review["fk_restaurant"],
-                            review["fk_user"]))
-        con.commit()
+        query = 'INSERT INTO reviews (stars, review, fk_restaurant, fk_user) VALUES (?, ?, ?, ?)'
+        if not (review.get('stars') and review.get('review') and review.get('fk_restaurant') and review.get('fk_user')):
+            return {"error": "Request doesn't have all necessary fields"}, 406
+        try:
+            cur.execute(query, (review["stars"],
+                                review["review"], 
+                                review["fk_restaurant"],
+                                review["fk_user"]))
+            con.commit()
+        except:
+            return 'Woopsie'
         return review
     else:
         return {"error": "Request must be JSON"}, 415

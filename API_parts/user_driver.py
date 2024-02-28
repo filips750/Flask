@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, Blueprint
-from db_drivers import get_cursor_and_connection, get_cursor, find_next_id
+from db_drivers import get_cursor_and_connection, get_cursor
 
 
 auth = Blueprint('auth', __name__, template_folder='API_parts')
@@ -20,9 +20,8 @@ def add_user():
     if request.is_json:
         cur, con = get_cursor_and_connection()
         user = request.get_json()
-        user["id"] = find_next_id('users')
-        query = 'INSERT INTO users (id, email, password) VALUES (?, ?, ?)'
-        cur.execute(query, (user['id'], user['email'], user['password']))
+        query = 'INSERT INTO users (email, password) VALUES (?, ?)'
+        cur.execute(query, (user['email'], user['password']))
         con.commit()
         return user, 201
     return {"error": "Request must be JSON"}, 415

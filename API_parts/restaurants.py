@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, Blueprint
-from db_drivers import get_cursor, get_cursor_and_connection, find_next_id, sanitize
+from db_drivers import get_cursor, get_cursor_and_connection, sanitize
 
 
 restaurants = Blueprint('restaurants', __name__, template_folder='API_parts')
@@ -22,10 +22,8 @@ def add_restaurant():
     if request.is_json:
         cur, con = get_cursor_and_connection()
         restaurant = request.get_json()
-        restaurant["id"] = find_next_id('restaurants')
-        query = 'INSERT INTO restaurants (id, name, localisation) VALUES (?, ?, ?)'
-        cur.execute(query, (restaurant['id'],
-                            restaurant['name'],
+        query = 'INSERT INTO restaurants (name, localisation) VALUES (?, ?)'
+        cur.execute(query, (restaurant['name'],
                             restaurant['localisation']))
         con.commit()
     else:
