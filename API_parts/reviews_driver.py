@@ -13,7 +13,7 @@ def get_review():
     if request.args.get('id'):
         with app.app_context():
             review = Reviews.query.filter_by(id=request.args.get('id')).first()
-        return review.to_dict()
+            return review.to_dict()
 
 
 @reviews.post('/review')
@@ -25,8 +25,7 @@ def add_review():
     if not (review_to_add.get('stars') and
             review_to_add.get('review') and
             review_to_add.get('restaurant_id') and
-            review_to_add.get('user_id')
-            ):
+            review_to_add.get('user_id')):
         return {"error": "Request doesn't have all necessary fields"}, 406
     try:
         with app.app_context():
@@ -51,19 +50,21 @@ def get_reviews():
             return review.to_dict()
 
     stars_comparator = request.args.get('stars_comparator')
-    review_txt = request.args.get["review"]
+    review_txt = request.args.get("review")
 
     reviews_query = Reviews.query \
         .filter(Reviews.review.ilike(f"%{review_txt}%")) \
-        .filter(or_(Reviews.fk_restaurant == request.args.get('id'), Reviews.fk_user == request.args.get('id')))
+        .filter(or_(Reviews.restaurant_id == request.args.get('id'),
+                    Reviews.user_id == request.args.get('id')))
 
     if stars_comparator not in ['>', '<']:
+        reviews = reviews_query.all()
         return [review.dict() for review in reviews]
 
     if stars_comparator == '>':
-        reviews_query = reviews_query.filter(Reviews.stars > request.args.get('stars'))
+        reviews_query = reviews_query.order_by(Reviews.stars)
     elif stars_comparator == '<':
-        reviews_query = reviews_query.filter(Reviews.stars < request.args.get('stars'))
+        reviews_query = reviews_query.order_by(Reviews.stars)
 
     reviews = reviews_query.all()
     return [review.dict() for review in reviews]

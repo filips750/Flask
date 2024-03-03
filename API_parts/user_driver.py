@@ -19,13 +19,13 @@ def get_user():
 def get_user_info():
     if not request.is_json:
         return {"error": "Request must be JSON"}, 415
-    
     user = request.get_json()
     if not user.get('email') or not user.get('password'):
         return {"error": "Missing required fields"}, 406
     if not verify_email(user.get('email')):
         return {"error": "Uncorrectly formatted email"}
-    if not verify_profile_permission(user.get('email'), hasher(user.get('password'))):
+    if not verify_profile_permission(user.get('email'),
+                                     hasher(user.get('password'))):
         return {"error": "Wrong email or password"}
 
     with app.app_context():
@@ -47,7 +47,10 @@ def add_user():
     hashed = hasher(user.get('password'))
 
     with app.app_context():
-        new_user = Users(hashed_pwd=hashed, email=user.get('email'))
+        new_user = Users(
+            hashed_pwd=hashed,
+            email=user.get('email')
+            )
         db.session.add(new_user)
         db.session.commit()
 

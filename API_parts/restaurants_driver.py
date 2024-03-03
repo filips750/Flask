@@ -1,8 +1,6 @@
 from flask import request, Blueprint
 from DB_wrappers.models import Restaurants
 from app import app, db
-from sqlalchemy import or_
-
 
 restaurants = Blueprint('restaurants', __name__, template_folder='API_parts')
 
@@ -18,22 +16,23 @@ def get_restaurants():
             return restaurant.to_dict()
 
     stars_comparator = request.args.get('stars_comparator')
-    restaurant_txt = request.args.get["restaurant"]
+    restaurant_txt = request.args.get("restaurant")
 
     restaurants_query = Restaurants.query \
         .filter(Restaurants.name_of_restaurant.ilike(f"%{restaurant_txt}%")) \
-        .filter(or_(Restaurants.fk_restaurant == request.args.get('id'),
-                    Restaurants.fk_user == request.args.get('id')))
+        .filter(Restaurants.description_of_restaurant
+                .ilike(f"%{request.args.get('id')}%"))
 
     if stars_comparator not in ['>', '<']:
+        restaurants = restaurants_query.all()
         return [restaurant.dict() for restaurant in restaurants]
 
     if stars_comparator == '>':
         restaurants_query = restaurants_query \
-            .filter(Restaurants.stars_avg > request.args.get('stars'))
+            .filter(Restaurants.avg_stars > request.args.get('stars'))
     elif stars_comparator == '<':
         restaurants_query = restaurants_query \
-            .filter(Restaurants.stars_avg < request.args.get('stars'))
+            .filter(Restaurants.avg_stars < request.args.get('stars'))
 
     restaurants = restaurants_query.all()
     return [restaurant.dict() for restaurant in restaurants]

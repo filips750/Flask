@@ -1,9 +1,21 @@
 from app import db
 
+
 class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    hashed_pwd = db.Column(db.String(255), unique=False, nullable=False)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+        )
+    email = db.Column(
+        db.String(120),
+        unique=True,
+        nullable=False
+        )
+    hashed_pwd = db.Column(
+        db.String(255),
+        unique=False,
+        nullable=False
+        )
 
     def to_dict(self):
         return {
@@ -12,11 +24,28 @@ class Users(db.Model):
 
 
 class Restaurants(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name_of_restaurant = db.Column(db.String(255), unique=True, nullable=False)
-    description_of_restaurant = db.Column(db.String(1024), unique=True, nullable=False)
-    localisation = db.Column(db.String(255), unique=True, nullable=False)
-    avg_stars = db.Column(db.Float, nullable=False)
+    id = db.Column(
+        db.Integer,
+        primary_key=True)
+    name_of_restaurant = db.Column(
+        db.String(255),
+        unique=True,
+        nullable=False
+        )
+    description_of_restaurant = db.Column(
+        db.String(1024),
+        unique=True,
+        nullable=False
+        )
+    localisation = db.Column(
+        db.String(255),
+        unique=True,
+        nullable=False
+        )
+    avg_stars = db.Column(
+        db.Float,
+        nullable=False
+        )
 
     def to_dict(self):
         return {
@@ -29,11 +58,30 @@ class Restaurants(db.Model):
 
 
 class Reviews(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    stars = db.Column(db.Integer, unique=False, nullable=False)
-    review = db.Column(db.String(1024), unique=True, nullable=False)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+        )
+    stars = db.Column(
+        db.Integer,
+        unique=False,
+        nullable=False
+        )
+    review = db.Column(
+        db.String(1024),
+        unique=True,
+        nullable=False
+        )
+    restaurant_id = db.Column(
+        db.Integer,
+        db.ForeignKey('restaurants.id'),
+        nullable=False
+        )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=False
+        )
 
     def to_dict(self):
         return {
@@ -43,3 +91,36 @@ class Reviews(db.Model):
             'restaurant_id': self.restaurant_id,
             'user_id': self.user_id
         }
+
+
+class Menus():
+    id = db.Column(db.Integer, primary_key=True)
+    restaurant_id = db.Column(
+        db.Integer,
+        db.ForeignKey('restaurants.id'),
+        nullable=False
+        )
+
+
+class Items():
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+        )
+    price = db.Column(
+        db.Decimal(10, 2),
+        nullable=False
+        )
+    name_of_item = db.Column(
+        db.String(255),
+        nullable=False
+        )
+    description_of_item = db.Column(
+        db.String(1023),
+        nullable=False
+        )
+    menu_id = db.Column(
+        db.Integer,
+        db.ForeignKey('menus.id'),
+        nullable=False
+        )

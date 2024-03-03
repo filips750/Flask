@@ -1,12 +1,15 @@
-from flask import Flask, request, session
-from flask_session import SqlAlchemySessionInterface, Session
+from flask import Flask
+from flask_session import Session
+# from flask_session import SqlAlchemySessionInterface
 from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
 
 # Configure SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:12Kudelicze!@localhost:3306/kuluars'
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'mysql://root:12Kudelicze!@localhost:3306/kuluars'
+
 db = SQLAlchemy(app)
 
 # Configure Flask-Session to use SqlAlchemySessionInterface
