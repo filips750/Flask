@@ -1,19 +1,20 @@
-from flask import Flask, request, jsonify, Blueprint
+from flask import request, Blueprint
 from hasher import hasher
-from DB_wrappers.models import Users, db
-from app import app
+from DB_wrappers.models import Users
+from app import app, db
 from helpers.user_helper import verify_profile_permission, verify_email
 
 auth = Blueprint('auth', __name__, template_folder='API_parts')
+
+
 @auth.route('/auth')
-
-
 @auth.get("/user")
 def get_user():
     if request.args.get('id'):
-        user = Users.query.filter_by(id = request.args.get('id')).first()
+        user = Users.query.filter_by(id=request.args.get('id')).first()
         return user.email
-    
+
+
 @auth.post("/user/all")
 def get_user_info():
     if not request.is_json:
@@ -27,10 +28,11 @@ def get_user_info():
     if not verify_profile_permission(user.get('email'), hasher(user.get('password'))):
         return {"error": "Wrong email or password"}
 
-    hashed = hasher(user.get('password'))
-
     with app.app_context():
-        user = Users.query.filter_by(email = user.get('email'), hashed_pwd = hasher(user.get('password'))).first()
+        user = Users.query.filter_by(
+            email=user.get('email'),
+            hashed_pwd=hasher(user.get('password'))) \
+            .first()
     return user.to_dict()
 
 

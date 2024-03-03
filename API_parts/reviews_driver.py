@@ -1,14 +1,13 @@
-from flask import Flask, request, jsonify, Blueprint
-from db_drivers import get_cursor_and_connection, get_cursor
-from DB_wrappers.models import Reviews, db
-from app import app
+from flask import request, Blueprint
+from DB_wrappers.models import Reviews
+from app import app, db
 from sqlalchemy import or_
 
 
 reviews = Blueprint('reviews', __name__, template_folder='API_parts')
+
+
 @reviews.route('/rev')
-
-
 @reviews.get('/review')
 def get_review():
     if request.args.get('id'):
@@ -22,17 +21,26 @@ def add_review():
     if not request.is_json:
         return {"error": "Request must be JSON"}, 415
 
-    review = request.get_json()
-    if not (review.get('stars') and review.get('review') and review.get('fk_restaurant') and review.get('fk_user')):
+    review_to_add = request.get_json()
+    if not (review_to_add.get('stars') and
+            review_to_add.get('review') and
+            review_to_add.get('restaurant_id') and
+            review_to_add.get('user_id')
+            ):
         return {"error": "Request doesn't have all necessary fields"}, 406
     try:
         with app.app_context():
-            new_review = Reviews(stars=review.get('stars'), review=review.get('review'), email=review.get('email'))
+            new_review = Reviews(
+                stars=review_to_add.get('stars'),
+                review=review_to_add.get('review'),
+                restaurant_id=review_to_add.get('restaurant_id'),
+                user_id=review_to_add.get('user_id')
+            )
             db.session.add(new_review)
             db.session.commit()
-    except:
-        return 'Woopsie'
-    return review
+    except Exception as e:
+        return e
+    return review_to_add
 
 
 @reviews.get('/reviews')
@@ -41,7 +49,7 @@ def get_reviews():
         with app.app_context():
             review = Reviews.query.filter_by(id=request.args.get('id')).first()
             return review.to_dict()
-    
+
     stars_comparator = request.args.get('stars_comparator')
     review_txt = request.args.get["review"]
 
@@ -52,7 +60,6 @@ def get_reviews():
     if stars_comparator not in ['>', '<']:
         return [review.dict() for review in reviews]
 
-
     if stars_comparator == '>':
         reviews_query = reviews_query.filter(Reviews.stars > request.args.get('stars'))
     elif stars_comparator == '<':
@@ -60,7 +67,3 @@ def get_reviews():
 
     reviews = reviews_query.all()
     return [review.dict() for review in reviews]
-    
-            
-        
-        

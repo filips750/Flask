@@ -1,19 +1,18 @@
 from flask import Flask, request, session
 from flask_session import SqlAlchemySessionInterface, Session
 from flask_sqlalchemy import SQLAlchemy
-from DB_wrappers.models import Users, Reviews, Restaurants, db
 
 
 app = Flask(__name__)
 
 # Configure SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:12Kudelicze!@localhost:3306/kuluars'
-db.init_app(app)
+db = SQLAlchemy(app)
 
 # Configure Flask-Session to use SqlAlchemySessionInterface
 app.config['SESSION_TYPE'] = 'sqlalchemy'
 app.config['SESSION_SQLALCHEMY'] = db
-
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 app = Flask(__name__)
@@ -29,9 +28,13 @@ Session(app)
 from API_parts.restaurants_driver import restaurants
 from API_parts.user_driver import auth
 from API_parts.reviews_driver import reviews
+from helpers.restaurant_helper import update_avg_stars
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:12Kudelicze!@localhost:3306/kuluars'
 db.init_app(app)
+update_avg_stars()
+
 
 app.register_blueprint(restaurants)
 app.register_blueprint(auth)
