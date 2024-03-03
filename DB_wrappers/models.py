@@ -48,6 +48,8 @@ class Restaurants(db.Model):
         )
 
     def to_dict(self):
+        if not self:
+            return None
         return {
             'id': self.id,
             'name_of_restaurant': self.name_of_restaurant,
@@ -84,6 +86,8 @@ class Reviews(db.Model):
         )
 
     def to_dict(self):
+        if not self:
+            return None
         return {
             'id': self.id,
             'stars': self.stars,
@@ -94,12 +98,23 @@ class Reviews(db.Model):
 
 
 class Menus():
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+        )
     restaurant_id = db.Column(
         db.Integer,
         db.ForeignKey('restaurants.id'),
         nullable=False
         )
+
+    def to_dict(self):
+        if not self:
+            return None
+        return {
+            "id": self.id,
+            "restaurant_id": self.restaurant_id
+        }
 
 
 class Items():
@@ -108,7 +123,7 @@ class Items():
         primary_key=True
         )
     price = db.Column(
-        db.Decimal(10, 2),
+        db.Numeric(10, 2),
         nullable=False
         )
     name_of_item = db.Column(
@@ -124,3 +139,14 @@ class Items():
         db.ForeignKey('menus.id'),
         nullable=False
         )
+
+    def to_dict(self):
+        if not self:
+            return None
+        return {
+            "id": self.id,
+            "price": self.price,
+            "name_of_item": self.name_of_item,
+            "description_of_item": self.description_of_item,
+            "menu_id": self.menu_id
+        }

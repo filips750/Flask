@@ -4,6 +4,7 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 
 
+
 app = Flask(__name__)
 
 # Configure SQLAlchemy
@@ -31,6 +32,8 @@ Session(app)
 from API_parts.restaurants_driver import restaurants
 from API_parts.user_driver import auth
 from API_parts.reviews_driver import reviews
+from API_parts.menus_driver import menus
+from API_parts.items_driver import items
 from helpers.restaurant_helper import update_avg_stars
 
 
@@ -42,3 +45,5 @@ update_avg_stars()
 app.register_blueprint(restaurants)
 app.register_blueprint(auth)
 app.register_blueprint(reviews)
+app.register_blueprint(menus)
+app.register_blueprint(items)

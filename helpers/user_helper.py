@@ -11,7 +11,7 @@ def verify_profile_permission(email, password):
 
 def verify_email(email):
     email_validate_pattern = r"^\S+@\S+\.\S+$"
-    return re.match(email_validate_pattern, email)
+    return re.match(email_validate_pattern, email) is None
 
 
 verify_email("filips750@gmail.com")
