@@ -21,11 +21,11 @@ def get_restaurants():
     restaurants_query = Restaurants.query \
         .filter(Restaurants.name_of_restaurant.ilike(f"%{restaurant_txt}%")) \
         .filter(Restaurants.description_of_restaurant
-                .ilike(f"%{request.args.get('id')}%"))
+                .ilike(f"%{request.args.get('description_of_restaurant')}%"))
 
     if stars_comparator not in ['>', '<']:
         restaurants = restaurants_query.all()
-        return [restaurant.dict() for restaurant in restaurants]
+        return [restaurant.to_dict() for restaurant in restaurants]
 
     if stars_comparator == '>':
         restaurants_query = restaurants_query \
@@ -35,7 +35,7 @@ def get_restaurants():
             .filter(Restaurants.avg_stars < request.args.get('stars'))
 
     restaurants = restaurants_query.all()
-    return [restaurant.dict() for restaurant in restaurants]
+    return [restaurant.to_dict() for restaurant in restaurants]
 
 
 @restaurants.post("/restaurant")

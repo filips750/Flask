@@ -20,7 +20,7 @@ def post_item():
                 item.get("price") and
                 item.get("name_of_item") and
                 item.get("description_of_item")):
-            return None
+            return {"error": "Request doesn't have all necessary fields"}, 406
 
         with app.app_context():
             item_to_add = Items(

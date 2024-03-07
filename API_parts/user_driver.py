@@ -15,7 +15,7 @@ def get_user():
         return user.email
 
 
-@auth.post("/user/all")
+@auth.post("/user/login")
 def get_user_info():
     if not request.is_json:
         return {"error": "Request must be JSON"}, 415
