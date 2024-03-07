@@ -107,13 +107,17 @@ class Menus():
         db.ForeignKey('restaurants.id'),
         nullable=False
         )
+    is_active = db.Column(
+        db.Boolean
+        )
 
     def to_dict(self):
         if not self:
             return None
         return {
             "id": self.id,
-            "restaurant_id": self.restaurant_id
+            "restaurant_id": self.restaurant_id,
+            "is_active": self.is_active
         }
 
 
